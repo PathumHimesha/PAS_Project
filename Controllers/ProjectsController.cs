@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PAS_Project.Data;
 using PAS_Project.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PAS_Project.Controllers
 {
@@ -14,7 +16,45 @@ namespace PAS_Project.Controllers
             _context = context;
         }
 
-        // --- The "Blind Match" Logic ---
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Projects.ToListAsync());
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Projects/Create
+        [HttpPost]
+        // [ValidateAntiForgeryToken] <-- ME SECURITY BLOCK EKA AIN KALA
+        public async Task<IActionResult> Create(Project project)
+        {
+            if (!_context.Students.Any(s => s.StudentId == 1))
+            {
+                _context.Students.Add(new Student { StudentId = 1, Name = "Test Student", Email = "test@student.com" });
+                await _context.SaveChangesAsync();
+            }
+
+            project.StudentId = 1; 
+            project.Status = ProjectStatus.Pending;
+
+            ModelState.Clear();
+
+            try
+            {
+                _context.Add(project);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index)); 
+            }
+            catch (System.Exception ex)
+            {
+                return Content("DATABASE ERROR EKA: " + ex.Message + " | " + ex.InnerException?.Message);
+            }
+        }
+
+        // --- BLIND MATCH LOGIC ---
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExpressInterest(int projectId, int supervisorId)
@@ -25,25 +65,19 @@ namespace PAS_Project.Controllers
 
             if (project == null) return NotFound();
 
-            // 1. Assign the Supervisor
             project.SupervisorId = supervisorId; 
-
-            // 2. Change the Status to Matched
             project.Status = ProjectStatus.Matched;
 
             _context.Update(project);
             await _context.SaveChangesAsync();
 
-            // 3. Redirect to The "Reveal" Page
             return RedirectToAction("MatchDetails", new { id = project.ProjectId }); 
         }
 
-        // --- The Reveal Page Logic ---
         public async Task<IActionResult> MatchDetails(int? id)
         {
             if (id == null) return NotFound();
 
-            // Fetch project WITH Student and Supervisor data included
             var project = await _context.Projects
                 .Include(p => p.Student)
                 .Include(p => p.Supervisor)

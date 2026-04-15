@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PAS_Project.Data;
 using PAS_Project.Models;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PAS_Project.Controllers
 {
+    [Authorize] // <--- Login wenne nathuwa mekata enna baha!
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -15,10 +18,6 @@ namespace PAS_Project.Controllers
         {
             _context = context;
         }
-
-        // ==========================================
-        // 1. STUDENT DASHBOARD
-        // ==========================================
 
         public async Task<IActionResult> Index()
         {
@@ -33,47 +32,24 @@ namespace PAS_Project.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Project project)
         {
-            if (!_context.Students.Any(s => s.StudentId == 1))
-            {
-                _context.Students.Add(new Student { StudentId = 1, Name = "Test Student", Email = "test@student.com" });
-                await _context.SaveChangesAsync();
-            }
+            // Aththa log wechcha student ge ID eka gannawa
+            var userId = int.Parse(User.FindFirst("UserId").Value);
 
-            project.StudentId = 1; 
+            project.StudentId = userId; 
             project.Status = ProjectStatus.Pending;
 
             ModelState.Clear();
 
-            try
-            {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index)); 
-            }
-            catch (System.Exception ex)
-            {
-                return Content("DATABASE ERROR EKA: " + ex.Message + " | " + ex.InnerException?.Message);
-            }
+            _context.Add(project);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index)); 
         }
 
-        // ==========================================
-        // 2. THE BLIND MATCH ENGINE (Supervisor Action)
-        // ==========================================
-
         [HttpPost]
-        public async Task<IActionResult> ExpressInterest(int projectId, int supervisorId)
+        public async Task<IActionResult> ExpressInterest(int projectId)
         {
-            // BUG FIX: Added 'PreferredResearchAreas' to prevent NOT NULL constraint error
-            if (!_context.Supervisors.Any(s => s.SupervisorId == supervisorId))
-            {
-                _context.Supervisors.Add(new Supervisor { 
-                    SupervisorId = supervisorId, 
-                    Name = "Dr. Default Supervisor", 
-                    Email = "dr.supervisor@pas.com",
-                    PreferredResearchAreas = "Software Engineering, AI" // <--- MEKA THAMAI ALUTHIN DAMME
-                });
-                await _context.SaveChangesAsync();
-            }
+            // Aththa log wechcha supervisor ge ID eka gannawa
+            var supervisorId = int.Parse(User.FindFirst("UserId").Value);
 
             var project = await _context.Projects
                                         .Include(p => p.Student) 

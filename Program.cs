@@ -5,6 +5,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication("CookieAuth")
+    .AddCookie("CookieAuth", options =>
+    {
+        options.Cookie.Name = "PASLoginCookie";
+        options.LoginPath = "/Account/Login";
+    });
 
 // Database Configuration - SQLite setup for EF Core
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

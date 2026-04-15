@@ -1,0 +1,45 @@
+@model PAS_Project.Models.Project
+
+@{
+    ViewData["Title"] = "Match Details";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">Blind Match Successful! 🎉</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">🎓 Student Information</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> @Model.Student?.Name</p>
+                    <p><strong>Email:</strong> @Model.Student?.Email</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-success">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">👨‍🏫 Supervisor Information</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> @Model.Supervisor?.Name</p>
+                    <p><strong>Email:</strong> @Model.Supervisor?.Email</p>
+                    <p><strong>Research Areas:</strong> @Model.Supervisor?.PreferredResearchAreas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 card p-4 shadow-sm bg-light">
+        <h4>📋 Project Details</h4>
+        <p><strong>Title:</strong> @Model.Title</p>
+        <p><strong>Research Area:</strong> @Model.ResearchArea</p>
+        <p><strong>Tech Stack:</strong> @Model.TechnicalStack</p>
+        <p><strong>Status:</strong> <span class="badge bg-warning text-dark fs-6">@Model.Status</span></p>
+    </div>
+</div>

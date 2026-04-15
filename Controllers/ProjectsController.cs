@@ -16,6 +16,10 @@ namespace PAS_Project.Controllers
             _context = context;
         }
 
+        // ==========================================
+        // 1. STUDENT DASHBOARD
+        // ==========================================
+
         public async Task<IActionResult> Index()
         {
             return View(await _context.Projects.ToListAsync());
@@ -26,9 +30,7 @@ namespace PAS_Project.Controllers
             return View();
         }
 
-        // POST: Projects/Create
         [HttpPost]
-        // [ValidateAntiForgeryToken] <-- ME SECURITY BLOCK EKA AIN KALA
         public async Task<IActionResult> Create(Project project)
         {
             if (!_context.Students.Any(s => s.StudentId == 1))
@@ -54,11 +56,25 @@ namespace PAS_Project.Controllers
             }
         }
 
-        // --- BLIND MATCH LOGIC ---
+        // ==========================================
+        // 2. THE BLIND MATCH ENGINE (Supervisor Action)
+        // ==========================================
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExpressInterest(int projectId, int supervisorId)
         {
+            // BUG FIX: Added 'PreferredResearchAreas' to prevent NOT NULL constraint error
+            if (!_context.Supervisors.Any(s => s.SupervisorId == supervisorId))
+            {
+                _context.Supervisors.Add(new Supervisor { 
+                    SupervisorId = supervisorId, 
+                    Name = "Dr. Default Supervisor", 
+                    Email = "dr.supervisor@pas.com",
+                    PreferredResearchAreas = "Software Engineering, AI" // <--- MEKA THAMAI ALUTHIN DAMME
+                });
+                await _context.SaveChangesAsync();
+            }
+
             var project = await _context.Projects
                                         .Include(p => p.Student) 
                                         .FirstOrDefaultAsync(p => p.ProjectId == projectId);

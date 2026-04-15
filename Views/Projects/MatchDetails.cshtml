@@ -5,41 +5,40 @@
 }
 
 <div class="container mt-5">
-    <h2 class="text-center text-primary mb-4">Blind Match Successful! 🎉</h2>
-    <hr />
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card shadow-sm border-primary">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">🎓 Student Information</h4>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-success rounded-3">
+                <div class="card-header bg-success text-white text-center py-3">
+                    <h2 class="mb-0">🎉 It's a Match! 🎉</h2>
                 </div>
-                <div class="card-body">
-                    <p><strong>Name:</strong> @Model.Student?.Name</p>
-                    <p><strong>Email:</strong> @Model.Student?.Email</p>
+                
+                <div class="card-body p-5">
+                    <h4 class="text-center mb-4 text-dark">Project: <strong>@Model.Title</strong></h4>
+                    
+                    <div class="row text-center mb-4 mt-4">
+                        <div class="col-md-6 border-end">
+                            <h5 class="text-muted">Project by</h5>
+                            <h1 class="display-4">🎓</h1>
+                            <p class="fs-5 fw-bold mb-0 text-primary">@(Model.Student?.Name ?? "Test Student")</p>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5 class="text-muted">Assigned Supervisor</h5>
+                            <h1 class="display-4">👨‍🏫</h1>
+                            <p class="fs-5 fw-bold mb-0 text-success">@(Model.Supervisor?.Name ?? "Dr. Supervisor")</p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info text-center mt-4">
+                        <strong>Research Area:</strong> @Model.ResearchArea <br/>
+                        <strong>Tech Stack:</strong> @Model.TechnicalStack
+                    </div>
+
+                    <div class="d-grid mt-5">
+                        <a asp-controller="Supervisors" asp-action="Dashboard" class="btn btn-outline-secondary btn-lg">Back to Dashboard</a>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6">
-            <div class="card shadow-sm border-success">
-                <div class="card-header bg-success text-white">
-                    <h4 class="mb-0">👨‍🏫 Supervisor Information</h4>
-                </div>
-                <div class="card-body">
-                    <p><strong>Name:</strong> @Model.Supervisor?.Name</p>
-                    <p><strong>Email:</strong> @Model.Supervisor?.Email</p>
-                    <p><strong>Research Areas:</strong> @Model.Supervisor?.PreferredResearchAreas</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="mt-4 card p-4 shadow-sm bg-light">
-        <h4>📋 Project Details</h4>
-        <p><strong>Title:</strong> @Model.Title</p>
-        <p><strong>Research Area:</strong> @Model.ResearchArea</p>
-        <p><strong>Tech Stack:</strong> @Model.TechnicalStack</p>
-        <p><strong>Status:</strong> <span class="badge bg-warning text-dark fs-6">@Model.Status</span></p>
     </div>
 </div>

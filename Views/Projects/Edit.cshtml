@@ -1,0 +1,33 @@
+@model PAS_Project.Models.Project
+@{ ViewData["Title"] = "Edit Project"; }
+
+<div class="container mt-5">
+    <div class="card shadow border-warning">
+        <div class="card-header bg-warning text-dark fw-bold fs-4">✏️ Edit Project Proposal</div>
+        <div class="card-body p-4">
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="ProjectId" />
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Project Title</label>
+                    <input asp-for="Title" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Project Abstract</label>
+                    <textarea asp-for="Abstract" class="form-control" rows="4" required></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Technical Stack</label>
+                        <input asp-for="TechnicalStack" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Research Area</label>
+                        <input asp-for="ResearchArea" class="form-control" required />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Save Changes</button>
+                <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

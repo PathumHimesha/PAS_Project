@@ -1,8 +1,68 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<PAS_Project.Models.Project>
+
+@{
+    ViewData["Title"] = User.IsInRole("Supervisor") ? "All Projects" : "My Projects";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">
+        @(User.IsInRole("Supervisor") ? "📋 All Submitted Projects" : "🎓 My Submitted Projects")
+    </h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No projects found.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Project Title</th>
+                        <th>Research Area</th>
+                        <th>Tech Stack</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">@item.Title</td>
+                            <td>@item.ResearchArea</td>
+                            <td>@item.TechnicalStack</td>
+                            <td>
+                                @if (item.Status == PAS_Project.Models.ProjectStatus.Matched)
+                                {
+                                    <span class="badge bg-success px-3 py-2">Matched 🎉</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark px-3 py-2">Pending ⏳</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Status == PAS_Project.Models.ProjectStatus.Matched)
+                                {
+                                    <a asp-action="MatchDetails" asp-route-id="@item.ProjectId" class="btn btn-outline-primary btn-sm">View Match</a>
+                                }
+                                else if (User.IsInRole("Student"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.ProjectId" class="btn btn-warning btn-sm text-dark fw-bold">✏️ Edit</a>
+                                    <a asp-action="Delete" asp-route-id="@item.ProjectId" class="btn btn-danger btn-sm fw-bold">🗑️ Withdraw</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (User.IsInRole("Student"))
+    {
+        <a asp-action="Create" class="btn btn-success mt-3">+ Submit Another Project</a>
+    }
 </div>

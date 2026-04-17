@@ -1,0 +1,15 @@
+@model PAS_Project.Models.Project
+@{ ViewData["Title"] = "Withdraw Project"; }
+
+<div class="container mt-5">
+    <div class="alert alert-danger shadow">
+        <h3 class="alert-heading fw-bold">⚠️ Are you sure you want to withdraw this project?</h3>
+        <p>Once you withdraw <strong>@Model.Title</strong>, supervisors will no longer be able to see it. This action cannot be undone.</p>
+        <hr>
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="ProjectId" />
+            <button type="submit" class="btn btn-danger btn-lg fw-bold">Yes, Withdraw Project 🗑️</button>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-lg ms-3">Cancel</a>
+        </form>
+    </div>
+</div>

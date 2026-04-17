@@ -17,14 +17,14 @@ namespace PAS_Project.Controllers
             _context = context;
         }
 
-        // Login Page eka pennana method eka
+        // GET: /Account/Login
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
-        // Login form eka submit kalama wada karana method eka
+        // POST: /Account/Login
         [HttpPost]
         public async Task<IActionResult> Login(string email, string role)
         {
@@ -36,7 +36,6 @@ namespace PAS_Project.Controllers
             {
                 var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
                 if (student == null) {
-                    // Email eka nathnam aluth student kenek auto hadenawa
                     student = new Models.Student { Name = email.Split('@')[0], Email = email };
                     _context.Students.Add(student);
                     await _context.SaveChangesAsync();
@@ -49,7 +48,6 @@ namespace PAS_Project.Controllers
             {
                 var supervisor = await _context.Supervisors.FirstOrDefaultAsync(s => s.Email == email);
                 if (supervisor == null) {
-                    // Email eka nathnam aluth supervisor kenek auto hadenawa
                     supervisor = new Models.Supervisor { Name = "Dr. " + email.Split('@')[0], Email = email, PreferredResearchAreas = "Software Engineering" };
                     _context.Supervisors.Add(supervisor);
                     await _context.SaveChangesAsync();
@@ -58,18 +56,25 @@ namespace PAS_Project.Controllers
                 claims.Add(new Claim("UserId", supervisor.SupervisorId.ToString()));
                 claims.Add(new Claim(ClaimTypes.Role, "Supervisor"));
             }
+            else if (role == "ModuleLeader")
+            {
+                // Admin Coordinator logic
+                claims.Add(new Claim(ClaimTypes.Name, "Admin Coordinator"));
+                claims.Add(new Claim("UserId", "999")); 
+                claims.Add(new Claim(ClaimTypes.Role, "ModuleLeader"));
+            }
 
-            // ASP.NET Core eke cookie eka hadanawa (Login wenawa)
             var identity = new ClaimsIdentity(claims, "CookieAuth");
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync("CookieAuth", principal);
 
-            // Login wunata passe yanna ona thana
+            // Redirects based on role
+            if (role == "ModuleLeader") return RedirectToAction("Dashboard", "Admin");
             if (role == "Supervisor") return RedirectToAction("Dashboard", "Supervisors");
             return RedirectToAction("Index", "Projects");
         }
 
-        // Logout wenna
+        // GET: /Account/Logout
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync("CookieAuth");

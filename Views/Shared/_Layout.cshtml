@@ -12,24 +12,32 @@
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">PAS_Project</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-action="Index">🏠 Home</a>
+                        </li>
+
                         @if (User.Identity.IsAuthenticated)
                         {
                             @if (User.IsInRole("Student"))
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark fw-bold" asp-controller="Projects" asp-action="Create">🎓 Submit Project</a>
+                                <li class="nav-item ms-3">
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Projects" asp-action="Create">🎓 Submit Project</a>
                                 </li>
                             }
                             <li class="nav-item">
-                                <a class="nav-link text-dark fw-bold" asp-controller="Projects" asp-action="Index">📋 All Projects</a>
+                                <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Projects" asp-action="Index">📋 All Projects</a>
                             </li>
                             @if (User.IsInRole("Supervisor"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-primary fw-bold" asp-controller="Supervisors" asp-action="Dashboard">👨‍🏫 Supervisor Dashboard</a>
+                                    <a class="nav-link text-primary fw-bold" asp-area="" asp-controller="Supervisors" asp-action="Dashboard">👨‍🏫 Supervisor Dashboard</a>
                                 </li>
                             }
                         }
@@ -42,13 +50,13 @@
                                 <span class="badge bg-secondary">Hello, @User.Identity.Name!</span>
                             </li>
                             <li class="nav-item">
-                                <a class="btn btn-outline-danger btn-sm mt-1" asp-controller="Account" asp-action="Logout">Log Out</a>
+                                <a class="btn btn-outline-danger btn-sm mt-1" asp-area="" asp-controller="Account" asp-action="Logout">Log Out</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Log In</a>
+                                <a class="btn btn-primary" asp-area="" asp-controller="Account" asp-action="Login">Log In</a>
                             </li>
                         }
                     </ul>
@@ -64,7 +72,15 @@
         </main>
     </div>
 
+    <footer class="border-top footer text-muted mt-5 pt-3">
+        <div class="container text-center">
+            &copy; 2026 - PAS_Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
